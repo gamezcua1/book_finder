@@ -1,3 +1,6 @@
+require "nokogiri"
+require "open-uri"
+
 class Libgen
   attr_accessor :columns, :row
   attr_writer :books
