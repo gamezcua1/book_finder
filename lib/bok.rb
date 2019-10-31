@@ -3,6 +3,18 @@
 require "nokogiri"
 require "open-uri"
 
+class Hash
+
+  def stringify_keys
+    inject({}) do |hash, (key, value)|
+      value = value.stringify_keys if value.is_a?(Hash)
+      hash[key.to_s] = value
+      hash
+    end
+  end
+
+end
+
 # b-ok api interface for simple use with web scrapping
 class Bok
   BASEURL = "https://b-ok.cc"
@@ -35,7 +47,7 @@ class Bok
     @page = nil
     @img_by_book = []
     @title_by_book = []
-    @links_by_book = []
+    @mirrors_by_book = []
     @authors_by_book = []
     @year_by_book = []
     @language_by_book = []
@@ -58,23 +70,23 @@ class Bok
     books = []
     @img_by_book.zip(
       @title_by_book,
-      @links_by_book,
+      @mirrors_by_book,
       @authors_by_book,
       @year_by_book,
       @language_by_book,
       @extension_by_book,
       @size_by_book
     ).each do |book|
-      books.push(
+      books.push({
         img: book[0],
         title: book[1],
-        link: book[2],
+        mirrors: [book[2]],
         authors: book[3],
         year: book[4],
         language: book[5],
         extension: book[6],
         size: book[7]
-      )
+      }.stringify_keys)
     end
     books
   end
@@ -91,7 +103,7 @@ class Bok
       url = BASEURL.to_s + node["href"].to_s
       doc = Nokogiri::HTML(URI.parse(url).open)
       doc.search("a.dlButton").each do |nodes|
-        @links_by_book.push(BASEURL.to_s + nodes["href"].to_s)
+        @mirrors_by_book.push(BASEURL.to_s + nodes["href"].to_s)
       end
     end
   end

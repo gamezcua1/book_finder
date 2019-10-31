@@ -23,8 +23,19 @@ class BookFinder
       @result += @bok.search(params)
     end
 
-    @result
+    @result = @result.map do |book|
+      book.map { |key, value| [key.to_s.downcase.chomp, value.to_s.downcase.chomp] }.to_h
+    end
+
+
+    @result.uniq { |book| {authors: book['authors'], title: book['title'], year: book['year'], language: book['language'], size: book['size'], extension: book['extension']} }
 
   end
 
 end
+
+books = BookFinder.new.search(params:{query:'dog'})
+puts books.length
+puts books.shift, books.pop
+puts '------'
+p books
