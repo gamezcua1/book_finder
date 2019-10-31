@@ -7,12 +7,17 @@ class Libgen
 
   BASE_URL = "http://gen.lib.rus.ec/search.php".freeze
 
-  def search(input: "", by: nil, ordered_by: nil, order_mode: nil, page: 1)
-    url = BASE_URL + "?req=#{input}"
+  def search(params)
+    
+    query, by, ordered_by, order_mode, page = params.values
+    
+    return :QUERY_MISSING unless query
+
+    url = BASE_URL + "?req=#{query}"
     url << "&sort=#{ordered_by}" if ordered_by
     url << "&sortmode=#{order_mode}" if order_mode
     url << "&column=#{by}" if by
-    url << "&page=#{page}"
+    url << "&page=#{page}" if page
 
     html = URI.parse(url).open
     @doc = Nokogiri::HTML(html)
@@ -33,7 +38,7 @@ class Libgen
   def initialize_columns
     dom_cols = @doc.search('[@bgcolor="#C0C0C0"]').first.children
     @columns = dom_cols.map { |col|
-      col.content.trip.downcase.tr("()", "") unless col.content.strip.empty?
+      col.content.strip.downcase.tr("()", "") unless col.content.strip.empty?
     }
 
     @columns.compact!

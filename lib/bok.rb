@@ -7,21 +7,14 @@ require "open-uri"
 class Bok
   BASEURL = "https://b-ok.cc"
 
-  def initialize
-    @page = 1
-    @img_by_book = []
-    @title_by_book = []
-    @links_by_book = []
-    @authors_by_book = []
-    @year_by_book = []
-    @language_by_book = []
-    @extension_by_book = []
-    @size_by_book = []
-  end
+  def search(params)
+    setup
 
-  def search(query:, page: 1, from: nil, to: nil, language: nil, order_by: nil)
-    # https://b-ok.cc/s/?q=ruby&yearFrom=2018&yearTo=2019&language=english&order=year
-    @page = page
+    query, page, from, to, language, order_by = params.values
+
+    return :QUERY_MISSING unless query
+
+    @page = page || 1
     url = BASEURL + "/s/?q=#{query}&page=#{page}"
     if from && to
       url += "&yearFrom=#{from}&yearTo=#{to}"
@@ -36,6 +29,18 @@ class Bok
     @doc = Nokogiri::HTML(html)
     run
     structure
+  end
+
+  def setup
+    @page = nil
+    @img_by_book = []
+    @title_by_book = []
+    @links_by_book = []
+    @authors_by_book = []
+    @year_by_book = []
+    @language_by_book = []
+    @extension_by_book = []
+    @size_by_book = [] 
   end
 
   private
@@ -74,7 +79,7 @@ class Bok
     books
   end
 
-  def imgurls
+  def img_urls
     @doc.search("img.cover.lazy").each do |node|
       @img_by_book.push("https:" + node["data-src"].to_s)
     end
