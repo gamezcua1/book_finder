@@ -9,4 +9,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.homepage = "https://github.com/gamezcua1/book_finder"
   s.license = "MIT"
+
+  s.add_dependency "nokogiri", "~> 1.6"
 end
