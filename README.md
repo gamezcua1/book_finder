@@ -23,13 +23,25 @@ Or install it yourself as:
 ``` rb
 require 'book_finder'
 
-finder = BookFinder.new
-from_libgen = finder.search(api: 'libgen', params: { query: 'ruby' })
-from_bok = finder.search(api: 'bok', params: { query: 'ruby' })
-from_both = finder.search(params: { query: 'ruby' })
-from_libgen_by_author = finder.search(api: 'libgen', params: { query: 'elixir', by: 'author'})
-from_libgen_order_by_author_desc = finder.search(api: 'ibgen', params: { query: 'elixir', ordered_by: 'author', order_mode: 'DESC' })
+from_libgen = BookFinder.search(api: 'libgen', params: { query: 'ruby' })
+from_bok = BookFinder.search(api: 'bok', params: { query: 'ruby' })
+from_both = BookFinder.search(params: { query: 'ruby' })
+from_libgen_by_author = BookFinder.search(api: 'libgen', params: { query: 'elixir', by: 'author'})
+from_libgen_order_by_author_desc = BookFinder.search(api: 'libgn', params: { query: 'elixir', ordered_by: 'author', order_mode: 'DESC' })
 ```
+
+## Specific APIs
+
+``` rb
+require 'book_finder'
+
+only_libgen = BookFinder::Libgen.new
+only_from_libgen = only_libgen.search(query: 'ruby')
+
+only_bok = BookFinder::Bok.new
+only_from_bok = only_bok.search(query: 'ruby')	
+```
+
 ---------------------------------------------------------------------------
 
 # Docs
